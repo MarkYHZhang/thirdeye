@@ -16,7 +16,7 @@ class Brain():
 
     def start_server(self):
         HOST = ''
-        PORT = 8485
+        PORT = 8888
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('Socket created')
@@ -95,4 +95,3 @@ class Brain():
 
 
 Brain()
-
