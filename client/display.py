@@ -19,7 +19,8 @@ class Display():
     
     def view(self):
         while True: 
-            cv2.imshow('ImageWindow 2', self.frame)
+            resized = cv2.resize(self.frame, None, fx=3, fy=3)
+            cv2.imshow('ImageWindow 2', resized)
             cv2.waitKey(1)
 
     def receive(self):

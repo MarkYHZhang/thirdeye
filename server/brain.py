@@ -5,6 +5,8 @@ import struct
 import imutils
 import numpy as np
 import threading
+import time
+
 
 class Brain():
 
@@ -34,16 +36,14 @@ class Brain():
         print('Streaming Socket now listening')
 
         conn, addr = s.accept()
-        
+
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
         while True:
             result, frame = cv2.imencode('.jpg', self.processed_frame, encode_param)
             data = pickle.dumps(frame, 0)
             size = len(data)
             conn.send(struct.pack(">L", size) + data)
-            # cv2.imshow('ImageWindow', self.processed_frame)
-            # cv2.waitKey(1)
-            import time; time.sleep(1/1000)
+            time.sleep(1/60)
 
     def start_processing_server(self):
         HOST = ''
