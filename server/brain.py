@@ -84,10 +84,7 @@ class Brain():
                 thr.start()
             if self.processed_frame is None:
                 self.processed_frame = frame
-            # import time
-            # time.sleep(1/100)
-            # cv2.imshow('ImageWindow', self.processed_frame)
-            # cv2.waitKey(1)
+        time.sleep(1/60)
     
     def process(self, input_frame):
         frame = imutils.resize(input_frame, width=400)
