@@ -12,9 +12,37 @@ class Brain():
         print("[INFO] loading model...")
         self.net = cv2.dnn.readNetFromCaffe("deploy.prototxt.txt", "res10_300x300_ssd_iter_140000.caffemodel")
         self.processed_frame = None
-        self.start_server()
+        threads = [
+            threading.Thread(target=self.start_processing_server, args=(), kwargs={}),
+            threading.Thread(target=self.start_streaming_server, args=(), kwargs={}),
+        ]
+        for th in threads:
+            th.start()
+            print(f'threads {th} started')
+            th.join(0.1)
 
-    def start_server(self):
+    def start_streaming_server(self):
+        HOST = ''
+        PORT = 3889
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print('Streaming Socket created')
+
+        s.bind((HOST, PORT))
+        print('Streaming Socket bind complete')
+        s.listen(10)
+        print('Streaming Socket now listening')
+
+        conn, addr = s.accept()
+        
+        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
+        while True:
+            result, frame = cv2.imencode('.jpg', self.processed_frame, encode_param)
+            data = pickle.dumps(frame, 0)
+            size = len(data)
+            conn.send(struct.pack(">L", size) + data)
+
+    def start_processing_server(self):
         HOST = ''
         PORT = 8888
 
@@ -53,8 +81,8 @@ class Brain():
                 thr.start()
             if self.processed_frame is None:
                 self.processed_frame = frame
-            cv2.imshow('ImageWindow', self.processed_frame)
-            cv2.waitKey(1)
+            # cv2.imshow('ImageWindow', self.processed_frame)
+            # cv2.waitKey(1)
     
     def process(self, input_frame):
         frame = imutils.resize(input_frame, width=400)
