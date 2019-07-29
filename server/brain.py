@@ -23,7 +23,7 @@ class Brain():
 
     def start_streaming_server(self):
         HOST = ''
-        PORT = 3889
+        PORT = 8889
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('Streaming Socket created')

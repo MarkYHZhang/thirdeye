@@ -7,7 +7,7 @@ class Display():
 
     def __init__(self,):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect(('localhost', 3889))
+        self.client_socket.connect(('localhost', 8889))
         self.view()
 
     def view(self):
