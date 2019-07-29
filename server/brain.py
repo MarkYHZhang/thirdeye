@@ -41,6 +41,9 @@ class Brain():
             data = pickle.dumps(frame, 0)
             size = len(data)
             conn.send(struct.pack(">L", size) + data)
+            # cv2.imshow('ImageWindow', self.processed_frame)
+            # cv2.waitKey(1)
+            import time; time.sleep(1/1000)
 
     def start_processing_server(self):
         HOST = ''
@@ -81,6 +84,8 @@ class Brain():
                 thr.start()
             if self.processed_frame is None:
                 self.processed_frame = frame
+            # import time
+            # time.sleep(1/100)
             # cv2.imshow('ImageWindow', self.processed_frame)
             # cv2.waitKey(1)
     

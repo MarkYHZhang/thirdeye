@@ -2,22 +2,36 @@ import cv2
 import socket
 import struct
 import pickle
+import threading
 
 class Display():
 
     def __init__(self,):
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect(('us.vpn.markyhzhang.com', 8889))
-        # self.client_socket.connect(('localhost', 8889))
-        self.view()
-
+        self.frame = None
+        threads = [
+            threading.Thread(target=self.receive, args=(), kwargs={}),
+            threading.Thread(target=self.view, args=(), kwargs={}),
+        ]
+        for th in threads:
+            th.start()
+            print(f'threads {th} started')
+            th.join(0.1)
+    
     def view(self):
+        while True: 
+            cv2.imshow('ImageWindow 2', self.frame)
+            cv2.waitKey(1)
+
+    def receive(self):
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # client_socket.connect(('us.vpn.markyhzhang.com', 8889))
+        client_socket.connect(('localhost', 8889))
         data = b""
         payload_size = struct.calcsize(">L")
         while True:
             while len(data) < payload_size:
                 # print("Recv: {}".format(len(data)))
-                data += self.client_socket.recv(4096)
+                data += client_socket.recv(4096)
 
             # print("Done Recv: {}".format(len(data)))
             packed_msg_size = data[:payload_size]
@@ -25,12 +39,10 @@ class Display():
             msg_size = struct.unpack(">L", packed_msg_size)[0]
             # print("msg_size: {}".format(msg_size))
             while len(data) < msg_size:
-                data += self.client_socket.recv(4096)
+                data += client_socket.recv(4096)
             frame_data = data[:msg_size]
             data = data[msg_size:]
             frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
-            frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            cv2.imshow('ImageWindow', frame)
-            cv2.waitKey(1)
+            self.frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
 Display()
