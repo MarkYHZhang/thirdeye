@@ -35,15 +35,18 @@ class Brain():
         s.listen(10)
         print('Streaming Socket now listening')
 
-        conn, addr = s.accept()
-
-        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
         while True:
-            result, frame = cv2.imencode('.jpg', self.processed_frame, encode_param)
-            data = pickle.dumps(frame, 0)
-            size = len(data)
-            conn.send(struct.pack(">L", size) + data)
-            time.sleep(1/60)
+            try:
+                conn, addr = s.accept()
+                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
+                while True:
+                    result, frame = cv2.imencode('.jpg', self.processed_frame, encode_param)
+                    data = pickle.dumps(frame, 0)
+                    size = len(data)
+                    conn.send(struct.pack(">L", size) + data)
+                    time.sleep(1/60)
+            except Exception as e:
+                print(str(e))
 
     def start_processing_server(self):
         HOST = ''
@@ -57,34 +60,38 @@ class Brain():
         s.listen(10)
         print('Socket now listening')
 
-        conn, addr = s.accept()
-
-        data = b""
-        payload_size = struct.calcsize(">L")
-        print("payload_size: {}".format(payload_size))
-        thr = None
         while True:
-            while len(data) < payload_size:
-                # print("Recv: {}".format(len(data)))
-                data += conn.recv(4096)
+            try:
+                conn, addr = s.accept()
 
-            # print("Done Recv: {}".format(len(data)))
-            packed_msg_size = data[:payload_size]
-            data = data[payload_size:]
-            msg_size = struct.unpack(">L", packed_msg_size)[0]
-            # print("msg_size: {}".format(msg_size))
-            while len(data) < msg_size:
-                data += conn.recv(4096)
-            frame_data = data[:msg_size]
-            data = data[msg_size:]
-            frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
-            frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            if not thr or not thr.is_alive():
-                thr = threading.Thread(target=self.process, args=(frame,), kwargs={})
-                thr.start()
-            if self.processed_frame is None:
-                self.processed_frame = frame
-        time.sleep(1/60)
+                data = b""
+                payload_size = struct.calcsize(">L")
+                print("payload_size: {}".format(payload_size))
+                thr = None
+                while True:
+                    while len(data) < payload_size:
+                        # print("Recv: {}".format(len(data)))
+                        data += conn.recv(4096)
+
+                    # print("Done Recv: {}".format(len(data)))
+                    packed_msg_size = data[:payload_size]
+                    data = data[payload_size:]
+                    msg_size = struct.unpack(">L", packed_msg_size)[0]
+                    # print("msg_size: {}".format(msg_size))
+                    while len(data) < msg_size:
+                        data += conn.recv(4096)
+                    frame_data = data[:msg_size]
+                    data = data[msg_size:]
+                    frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
+                    frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                    if not thr or not thr.is_alive():
+                        thr = threading.Thread(target=self.process, args=(frame,), kwargs={})
+                        thr.start()
+                    if self.processed_frame is None:
+                        self.processed_frame = frame
+                time.sleep(1/60)
+            except Exception as e:
+                print(str(e))
     
     def process(self, input_frame):
         frame = imutils.resize(input_frame, width=400)
