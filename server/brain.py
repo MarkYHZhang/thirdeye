@@ -68,10 +68,16 @@ class Brain():
                 payload_size = struct.calcsize(">L")
                 print("payload_size: {}".format(payload_size))
                 thr = None
+                client_disconnected = False
                 while True:
                     while len(data) < payload_size:
                         # print("Recv: {}".format(len(data)))
                         data += conn.recv(4096)
+                        if not data:
+                            client_disconnected = True
+                            break
+                    if client_disconnected:
+                        break
 
                     # print("Done Recv: {}".format(len(data)))
                     packed_msg_size = data[:payload_size]
