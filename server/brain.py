@@ -135,6 +135,35 @@ class Brain():
             cv2.putText(frame, text, (startX, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
         self.processed_frame = frame
+        resized = cv2.resize(frame, None, fx=3, fy=3)
+        ret, jpeg = cv2.imencode('.jpg', resized)
+        self.processed_image = jpeg.tobytes()
+    
+    def get_image(self):
+        return self.processed_image
 
 
-Brain()
+brain = Brain()
+
+
+from flask import Flask, render_template, Response
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+def gen():
+    while True:
+        frame = brain.get_image()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+app.run(host='0.0.0.0')
