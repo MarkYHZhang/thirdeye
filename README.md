@@ -9,4 +9,8 @@ A video processing framework for easy capture, processing, and streaming of vide
 2. Brain (processes video sent from Eye and make processed video stream available for Display)
 3. Display (streams processed video from Brain module)
     - [DONE] Python client
-    - [TODO] Web client
+    - [DONE] Web client
+
+## Upcoming Features
+1. [TODO] Support for multiple camera connectivity
+2. [TODO] Support for dashboard-like display
