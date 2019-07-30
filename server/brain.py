@@ -14,6 +14,7 @@ class Brain():
         print("[INFO] loading model...")
         self.net = cv2.dnn.readNetFromCaffe("deploy.prototxt.txt", "res10_300x300_ssd_iter_140000.caffemodel")
         self.processed_frame = None
+        self.processed_image = None
         threads = [
             threading.Thread(target=self.start_processing_server, args=(), kwargs={}),
             threading.Thread(target=self.start_streaming_server, args=(), kwargs={}),
