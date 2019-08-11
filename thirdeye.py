@@ -2,11 +2,6 @@ from flask import Flask, render_template, request, Response
 from flask_socketio import SocketIO,  Namespace, emit, send
 from processor import Processor
 from queue import Queue
-from imageio import imread
-import io
-import base64
-import cv2
-import matplotlib.pyplot as plt
 
 
 class Brain(Namespace):
