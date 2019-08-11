@@ -1,0 +1,18 @@
+#container {
+    margin: 0px auto;
+}
+#webcam {
+    width: 640px;
+    height: 480px;
+    background-color: #666;
+}
+#imageElement {
+    width: 640px;
+    height: 480px;
+    background-color: #666;
+}
+#canvas {
+    width: 640px;
+    height: 480px;
+    display: none;
+}
