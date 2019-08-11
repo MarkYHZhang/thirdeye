@@ -23,10 +23,6 @@ class Brain(Namespace):
         self.processors[channel].process(self.running[channel], self.channels[channel], data['frame'])
 
 
-import logging
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
