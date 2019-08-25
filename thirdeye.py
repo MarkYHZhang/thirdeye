@@ -14,6 +14,7 @@ class Brain(Namespace):
 
     def on_seeing(self, data):
         channel = data['channel']
+        print(channel)
         if channel in self.running and self.running[channel][0]:
             return
         if channel not in self.channels:
@@ -22,6 +23,10 @@ class Brain(Namespace):
             self.running[channel] = [True]
         self.processors[channel].process(self.running[channel], self.channels[channel], data['frame'])
 
+
+# import logging
+# log = logging.getLogger('werkzeug')
+# log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -37,13 +42,15 @@ socketio.on_namespace(brain)
 def index():
     return render_template('index.html')
 
-
+print("OKss")
 def gen(channel):
     while True:
         if channel not in brain.channels:
+            # print("OK")
             continue
         processed_results = brain.channels[channel]
         frame = processed_results.get()
+        # print(processed_results)
         with processed_results.mutex:
             processed_results.queue.clear()
         yield (b'--frame\r\n'
@@ -59,4 +66,4 @@ def video_feed():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    socketio.run(app, port=8888)
+    socketio.run(app, port=8000)
