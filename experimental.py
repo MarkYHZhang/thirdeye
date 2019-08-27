@@ -45,9 +45,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
 
 @app.route('/eye/<channel>')
@@ -55,7 +55,7 @@ def eye(channel):
     return render_template('eye.html')
 
 
-@app.route('/display')
+@app.route('/')
 def display():
     return render_template('display.html')
 

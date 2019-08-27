@@ -5,7 +5,7 @@ let ctx = canvas.getContext('2d');
 
 var localMediaStream = null;
 
-ws = new WebSocket("ws://"+window.location.hostname+":8889");
+ws = new ReconnectingWebSocket("ws://"+window.location.hostname+":8889");
 
 function see() {
     if (!localMediaStream) {
