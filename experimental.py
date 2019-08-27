@@ -32,12 +32,10 @@ class Brain():
 brain = Brain()
 
 
-def start_ws(ip='0.0.0.0', port=8000):
-    print("asdasda")
+def start_ws(ip='0.0.0.0', port=8889):
     start_server = websockets.serve(brain.consumer_handler, ip, port)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
-    print("asdasda")
 
 
 import logging
@@ -52,9 +50,19 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/eye/<channel>')
+def eye(channel):
+    return render_template('eye.html')
+
+
+@app.route('/display')
+def display():
+    return render_template('display.html')
+
+
 @app.route('/channels')
 def channels():
-    return json.dumps(brain.channels.keys)
+    return json.dumps(list(brain.running.keys()))
 
 
 def gen(channel):
@@ -80,7 +88,7 @@ def video_feed():
 
 if __name__ == '__main__':
     print("running")
-    http = threading.Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': 8080})
+    http = threading.Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': 8888})
     http.start()
     http.join(0.1)
-    start_ws('0.0.0.0', 8000)
+    start_ws('0.0.0.0', 8889)

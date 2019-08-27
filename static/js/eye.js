@@ -6,7 +6,7 @@ $(document).ready(function () {
 
     var localMediaStream = null;
 
-    ws = new WebSocket("ws://127.0.0.1:8000/");
+    ws = new WebSocket("ws://"+window.location.hostname+":8889");
 
     function see() {
         if (!localMediaStream) {
@@ -16,7 +16,11 @@ $(document).ready(function () {
         ctx.drawImage(webcam, 0, 0, webcam.videoWidth, webcam.videoHeight, 0, 0, 640, 480);
 
         let dataURL = canvas.toDataURL('image/jpeg');
-        packet = JSON.stringify({"channel": "main", "frame":dataURL});
+        var cur_path = window.location.href.split('/');
+        var channel_str = cur_path[cur_path.length-1];
+        // console.log(channel_str);
+        // packet = JSON.stringify({"channel": "main", "frame":dataURL});
+        packet = JSON.stringify({"channel": channel_str, "frame":dataURL});
         ws.send(packet);
     }
     var constraints = {
