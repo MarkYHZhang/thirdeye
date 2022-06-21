@@ -6,7 +6,7 @@ imutils==0.5.2
 isort==4.3.21
 lazy-object-proxy==1.4.1
 mccabe==0.6.1
-numpy==1.17.0
+numpy==1.22.0
 opencv-python==4.1.0.25
 pkg-resources==0.0.0
 pycodestyle==2.5.0
